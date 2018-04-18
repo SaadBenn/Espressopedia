@@ -3,6 +3,7 @@ import { StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import { Location, Permissions } from 'expo';
 import Map from './src/js/components/Map';
+import YelpService from './services/yelp';
 
 // hardcoded location just for testing the app
 let deltas = {
@@ -26,6 +27,13 @@ export default class App extends Component {
     await this.setState({ region });
   }
 
+  async function getCoffeeShops() {
+    const {latitude, longitude } = this.state.region;
+    const userLocation = { latitude, longitude };
+    const coffeeShops = await YelpService.getCoffeeShops(userLocation);
+    this.setState({ coffeeShops });
+  };
+
   async function getLocationAsync() {
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status === 'granted') {
@@ -33,14 +41,16 @@ export default class App extends Component {
     } else {
       throw new Error('Location permission not granted');
     }
+    await this.getCoffeeShops();
   }
 
   render() {
+    const { region, coffeeShops } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Map
           region={region}
-          places={this.state.coffeeShops} />
+          places={coffeeShops} />
       </SafeAreaView>
     );
   }
