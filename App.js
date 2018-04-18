@@ -1,12 +1,29 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React { Component } from 'react';
+import { StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native';
+import Map from './src/js/components/Map';
 
-export default class App extends React.Component {
+// hardcoded location just for testing the app
+let region = {
+  latitude: 37.321996988,
+  longitude: -122.0325472123455,
+  latitudeDelta: 0.0922,
+  longitudeDelta: 0.0421
+}
+
+export default class App extends Component {
+  state = {
+    region: null
+    coffeShops: []
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <Map
+          region={region}
+          places={this.state.coffeeShops} />
+      </SafeAreaView>
     );
   }
 }
