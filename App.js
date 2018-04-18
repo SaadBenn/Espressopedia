@@ -1,20 +1,38 @@
 import React { Component } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native';
+import { Location, Permissions } from 'expo';
 import Map from './src/js/components/Map';
 
 // hardcoded location just for testing the app
-let region = {
-  latitude: 37.321996988,
-  longitude: -122.0325472123455,
+let deltas = {
   latitudeDelta: 0.0922,
   longitudeDelta: 0.0421
-}
+};
 
 export default class App extends Component {
   state = {
     region: null
     coffeShops: []
+  };
+
+  componentWillMount() {
+    const location = this.getLocationAsync();
+    const region = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      ...deltas
+    };
+    await this.setState({ region });
+  }
+
+  async function getLocationAsync() {
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status === 'granted') {
+      return Location.getCurrentPositionAsync({enableHighAccuracy: true});
+    } else {
+      throw new Error('Location permission not granted');
+    }
   }
 
   render() {
