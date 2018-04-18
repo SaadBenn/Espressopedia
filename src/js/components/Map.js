@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { View, Text } from 'react-native'
-import { MapView } from 'expo'
+import React, { Component } from 'react';
+import { View, Text } from 'react-native';
+import { MapView } from 'expo';
 
 const Marker = Map.Marker
 export default class Map extends Component {
@@ -9,7 +9,7 @@ export default class Map extends Component {
 			<Marker key={i} title={place.name} 
 			coordinate={place.coords}/>
 		))
-	}
+	};
 
 	render() {
 		const { region } = this.props
@@ -22,13 +22,13 @@ export default class Map extends Component {
 				{ this.renderMarkers() }
 			</MapView>
 
-		)
+		);
 	}
 }
 
-const styles= {
+const styles= StyleSheet.create({
 	container: {
 		width: '100%'
 		height: '80%'
 	}
-} 
+}); 
