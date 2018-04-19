@@ -1,11 +1,11 @@
-import React { Component } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import { Location, Permissions } from 'expo';
-import Map from './src/js/components/Map';
+import Map from './src/components/Map';
 import YelpService from './services/yelp';
 
-// hardcoded location just for testing the app
+// hardcoded deltas
 let deltas = {
   latitudeDelta: 0.0922,
   longitudeDelta: 0.0421
@@ -13,36 +13,38 @@ let deltas = {
 
 export default class App extends Component {
   state = {
-    region: null
-    coffeShops: []
+    region: null,
+    coffeShops: [],
   };
 
   componentWillMount() {
-    const location = this.getLocationAsync();
+    this.getLocationAsync();
+  }
+  
+  getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      this.setState({
+        errorMessage: 'Permission to access location was denied'
+      });
+    }
+    
+    let location = await Location.getCurrentPositionAsync({});
     const region = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
       ...deltas
     };
     await this.setState({ region });
+    await this.getCoffeeShops();
   }
 
-  async function getCoffeeShops() {
-    const {latitude, longitude } = this.state.region;
+  getCoffeeShops = async () => {
+    const { latitude, longitude } = this.state.region;
     const userLocation = { latitude, longitude };
     const coffeeShops = await YelpService.getCoffeeShops(userLocation);
     this.setState({ coffeeShops });
   };
-
-  async function getLocationAsync() {
-    const { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status === 'granted') {
-      return Location.getCurrentPositionAsync({enableHighAccuracy: true});
-    } else {
-      throw new Error('Location permission not granted');
-    }
-    await this.getCoffeeShops();
-  }
 
   render() {
     const { region, coffeeShops } = this.state;

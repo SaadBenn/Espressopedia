@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { MapView } from 'expo';
 
-const Marker = Map.Marker
+const Marker = MapView.Marker
 export default class Map extends Component {
 	renderMarkers() {
 		return this.props.places.map((place, i) =>(
 			<Marker key={i} title={place.name} 
 			coordinate={place.coords}/>
 		))
-	};
+	}
 
 	render() {
 		const { region } = this.props
@@ -28,7 +28,7 @@ export default class Map extends Component {
 
 const styles= StyleSheet.create({
 	container: {
-		width: '100%'
-		height: '80%'
+		width: '100%',
+		height: '80%',
 	}
 }); 
